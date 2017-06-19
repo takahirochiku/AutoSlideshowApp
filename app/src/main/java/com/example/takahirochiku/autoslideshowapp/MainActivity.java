@@ -30,9 +30,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         imageView = (ImageView) findViewById(R.id.imageView);
+
         mForwardButton = (Button) findViewById(R.id.forward_button);
+        forward_button.setOnClickListener(this);
+
         mBackButton = (Button) findViewById(R.id.back_button);
+        back_button.setOnClickListener(this);
+
         mSwitchButton = (Button) findViewById(R.id.switch_button);
+        switch_button.setOnClickListener(this);
 
         // Android 6.0以降の場合
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -47,6 +53,19 @@ public class MainActivity extends AppCompatActivity {
             // Android 5系以下の場合
         } else {
             getContentsInfo();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getContentsInfo();
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -87,12 +106,30 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
     }
+        @Override
+        public void onClick(View view) {
+            if (v.getId() == R.id.forward_button) {
+                imageVIew.setImageURI(imageUri);
+            } else if (v.getId() == R.id.mBackButton) {
+            imageVIew.setImageURI(imageUri);
+            } else if(v.getId() == R.id.switch_button) {
+                 if(mTimer != null){
+               mTimer.cancel();
+                mTimer = null;
+            }else if (){
+            mTimer = new Timer();
+            mTimer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    mTimerSec += 0.1;
 
-    mForwardButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-
-            }
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            imageVIew.setImageURI(imageUri);
+                        }
+                    });
         }
+    },200,200);
+
 }
