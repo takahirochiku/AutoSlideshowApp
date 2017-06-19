@@ -1,5 +1,6 @@
 package com.example.takahirochiku.autoslideshowapp;
 
+import android.os.Handler;
 import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -15,12 +16,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class MainActivity extends AppCompatActivity {
 
+    Timer mTimer;
     ImageView imageView;
     Button mForwardButton;
     Button mBackButton;
     Button mSwitchButton;
+
+    Handler mHandler = new Handler();
+    double mTimerSec = 0.0;
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
 
@@ -32,13 +40,13 @@ public class MainActivity extends AppCompatActivity {
         imageView = (ImageView) findViewById(R.id.imageView);
 
         mForwardButton = (Button) findViewById(R.id.forward_button);
-        forward_button.setOnClickListener(this);
+        //forward_button.setOnClickListener(this);
 
         mBackButton = (Button) findViewById(R.id.back_button);
-        back_button.setOnClickListener(this);
+        //back_button.setOnClickListener(this);
 
         mSwitchButton = (Button) findViewById(R.id.switch_button);
-        switch_button.setOnClickListener(this);
+        //switch_button.setOnClickListener(this);
 
         // Android 6.0以降の場合
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -74,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case PERMISSIONS_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getContentsInfo();
+                    Log.d("ANDROID", "許可された");
+                } else {
+                    Log.d("ANDROID", "許可されなかった");
                 }
                 break;
             default:
@@ -106,17 +116,24 @@ public class MainActivity extends AppCompatActivity {
         }
         cursor.close();
     }
+
+    mForwardButton.setOnClickListener(new View.OnClickListener(){
         @Override
-        public void onClick(View view) {
-            if (v.getId() == R.id.forward_button) {
-                imageVIew.setImageURI(imageUri);
-            } else if (v.getId() == R.id.mBackButton) {
-            imageVIew.setImageURI(imageUri);
-            } else if(v.getId() == R.id.switch_button) {
-                 if(mTimer != null){
-               mTimer.cancel();
-                mTimer = null;
-            }else if (){
+        public void onClick (View v){
+        imageView.setImageURI(imageUri);}
+    }
+
+    mBackButton.setOnClickListener(new View.OnClickListener(){
+        @Override
+        public void onClick (View v){
+        imageView.setImageURI(imageUri);}
+    }
+
+     mSwitchButton.setOnClickListener(new View.OnClickListener(){
+        if (mTimer != null) {
+            mTimer.cancel();
+            mTimer = null;
+        } else if () {
             mTimer = new Timer();
             mTimer.schedule(new TimerTask() {
                 @Override
@@ -126,10 +143,11 @@ public class MainActivity extends AppCompatActivity {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            imageVIew.setImageURI(imageUri);
+                            imageView.setImageURI(imageUri);
                         }
                     });
-        }
-    },200,200);
-
+                }
+            }, 200, 200);
+    }
+}
 }
