@@ -16,6 +16,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -23,7 +25,7 @@ import static com.example.takahirochiku.autoslideshowapp.R.id.back_button;
 import static com.example.takahirochiku.autoslideshowapp.R.id.forward_button;
 import static com.example.takahirochiku.autoslideshowapp.R.id.switch_button;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     Timer mTimer;
     ImageView imageView;
@@ -31,6 +33,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Button mBackButton;
     Button mSwitchButton;
     Uri imageUri;
+    int num = 0;
+    Uri photo1;
+    Uri photo2;
+
+    ArrayList<Uri> imageList = new ArrayList<Uri>();
 
     Handler mHandler = new Handler();
     double mTimerSec = 0.0;
@@ -98,10 +105,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             do {
                 // indexからIDを取得し、そのIDから画像のURIを取得する
                 int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+                //先頭レコードの_IDの値を取得
                 Long id = cursor.getLong(fieldIndex);
+                //先頭レコードの_IDからURIを作成
                 imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-
-                //Log.d("ANDROID", "URI : " + imageUri.toString());
+                imageList.add(imageUri);
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -110,29 +118,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.forward_button) {
-            imageView.setImageURI(imageUri);
-        } else if (v.getId() == R.id.back_button) {
-            imageView.setImageURI(imageUri);
-        } else if (v.getId() == R.id.switch_button) {
-            if (mTimer != null) {
-                mTimer.cancel();
-                mTimer = null;
-            } else {
-                mTimer = new Timer();
-                mTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        mTimerSec += 2.0;
-
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                imageView.setImageURI(imageUri);
-                            }
-                        });
-                    }
-                }, 200, 200);
+            photo1 = imageList.get(num++);
+                imageView.setImageURI(photo1);
+            } else if (v.getId() == R.id.back_button) {
+                photo2 = imageList.get(num--);
+                imageView.setImageURI(photo2);
+            } else if (v.getId() == R.id.switch_button) {
+                if (mTimer != null) {
+                    mTimer.cancel();
+                    mTimer = null;
+                } else {
+                    mTimer = new Timer();
+                    mTimer.schedule(new TimerTask() {
+                        @Override
+                        public void run() {
+                            mTimerSec += 2.0;
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageView.setImageURI(imageUri);
+                                }
+                            });
+                        }
+                    }, 200, 200);
+                }
             }
         }
     }
-}
