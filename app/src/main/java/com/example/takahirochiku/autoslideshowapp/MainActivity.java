@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     int num = 0;
     Uri photo1;
     Uri photo2;
+    Uri photo3;
 
     ArrayList<Uri> imageList = new ArrayList<Uri>();
 
@@ -118,11 +119,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.forward_button) {
-            photo1 = imageList.get(num++);
-                imageView.setImageURI(photo1);
-            } else if (v.getId() == R.id.back_button) {
-                photo2 = imageList.get(num--);
+            if(mTimer == null){
+            if (num == imageList.size()) {
+                num = 0;
+                photo1 = imageList.get(num);
+            } else {
+                photo1 = imageList.get(num++);
+            }
+            imageView.setImageURI(photo1);
+            }
+        }else if (v.getId() == R.id.back_button) {
+            if(mTimer == null) {
+                if (num == 0) {
+                    num = imageList.size();
+                    photo2 = imageList.get(num);
+                } else {
+                    photo2 = imageList.get(num--);
+                }
                 imageView.setImageURI(photo2);
+            }
             } else if (v.getId() == R.id.switch_button) {
                 if (mTimer != null) {
                     mTimer.cancel();
@@ -136,7 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             mHandler.post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    imageView.setImageURI(imageUri);
+                                    if(num == imageList.size()) {
+                                        num = 0;
+                                    }
+                                    photo3 = imageList.get(num++);
+                                    imageView.setImageURI(photo3);
                                 }
                             });
                         }
