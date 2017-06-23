@@ -12,9 +12,11 @@ import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,10 +86,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     getContentsInfo();
                 }
-                break;
-            default:
-                break;
+                 else{
+                   toastMake("permission拒否しました。", 0, -200);
+                 }
+                //break;
+            //default:
+              //break;
         }
+    }
+
+    private void toastMake(String message, int x, int y){
+        Toast toast = Toast.makeText(this, message, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER|Gravity.CENTER, x, y);
+        toast.show();
     }
 
     private void getContentsInfo() {
@@ -131,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if (v.getId() == R.id.back_button) {
             if(mTimer == null) {
                 if (num == 0) {
-                    num = imageList.size();
+                    num = imageList.size()-1;
                     photo2 = imageList.get(num);
                 } else {
                     photo2 = imageList.get(num--);
@@ -159,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             });
                         }
-                    }, 200, 200);
+                    }, 2000, 2000);
                 }
             }
         }
