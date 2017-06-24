@@ -88,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                  else{
                    toastMake("permission拒否しました。", 0, -200);
+                    mForwardButton.setEnabled(false);
+                    mBackButton.setEnabled(false);
+                    mSwitchButton.setEnabled(false);
                  }
                 //break;
             //default:
